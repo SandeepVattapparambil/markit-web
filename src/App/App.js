@@ -19,21 +19,23 @@ class App extends Component {
     });
   }
 
-  createGoogleMap = () =>
-    new window.google.maps.Map(this.googleMapRef.current, {
-      zoom: 16,
+  createGoogleMap = () => {
+    return new window.google.maps.Map(this.googleMapRef.current, {
+      zoom: 14,
       center: {
         lat: 43.642567,
         lng: -79.387054
       },
       disableDefaultUI: true
     });
+  };
 
-  createMarker = () =>
-    new window.google.maps.Marker({
+  createMarker = () => {
+    return new window.google.maps.Marker({
       position: { lat: 43.642567, lng: -79.387054 },
       map: this.googleMap
     });
+  };
 
   render() {
     return (
@@ -66,6 +68,24 @@ class App extends Component {
                 id="google-map"
                 className="card-panel white map-holder"
               ></div>
+            </div>
+
+            <div className="col s12 m6">
+              <div className="card">
+                <div className="card-content grey-text">
+                  <span className="card-title">Add Marker</span>
+                  <div className="row">
+                    <div className="input-field col s9">
+                      <input
+                        placeholder="Enter your location"
+                        id="location"
+                        type="text"
+                        className="validate"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
