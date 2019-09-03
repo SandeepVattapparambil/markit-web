@@ -23,8 +23,8 @@ class App extends Component {
     return new window.google.maps.Map(this.googleMapRef.current, {
       zoom: 14,
       center: {
-        lat: 43.642567,
-        lng: -79.387054
+        lat: 52.520008,
+        lng: 13.404954
       },
       disableDefaultUI: true
     });
@@ -32,7 +32,7 @@ class App extends Component {
 
   createMarker = () => {
     return new window.google.maps.Marker({
-      position: { lat: 43.642567, lng: -79.387054 },
+      position: { lat: 52.520008, lng: 13.404954 },
       map: this.googleMap
     });
   };
@@ -82,6 +82,11 @@ class App extends Component {
                         type="text"
                         className="validate"
                       />
+                    </div>
+                    <div className="col s3">
+                      <a className="waves-effect waves-light blue btn">
+                        <i className="material-icons left">search</i>
+                      </a>
                     </div>
                   </div>
                 </div>
