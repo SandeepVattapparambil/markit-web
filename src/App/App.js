@@ -10,18 +10,30 @@ class App extends Component {
       searchQuery: "",
       markerDataArray: []
     };
+    this.googleMap = "";
+    this.marker = "";
     this.googleMapRef = React.createRef();
+    this.googleMapScript = document.createElement("script");
   }
 
   componentDidMount() {
-    const googleMapScript = document.createElement("script");
-    googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAyphEg6Ezze8PuQwfcVAn9e8S56BlEQM8&libraries=places`;
-    window.document.body.appendChild(googleMapScript);
+    this.googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAyphEg6Ezze8PuQwfcVAn9e8S56BlEQM8&libraries=places`;
+    window.document.body.appendChild(this.googleMapScript);
 
-    googleMapScript.addEventListener("load", () => {
+    this.googleMapScript.addEventListener("load", () => {
       this.googleMap = this.createGoogleMap();
-      this.marker = this.createMarker();
+      this.marker = this.createMarker(this.googleMap);
     });
+
+    this._getMarkers();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.markerDataArray !== prevState.markerDataArray) {
+      if (window.google) {
+        this.marker = this.createMarker(this.googleMap);
+      }
+    }
   }
 
   createGoogleMap = () => {
@@ -35,10 +47,15 @@ class App extends Component {
     });
   };
 
-  createMarker = () => {
-    return new window.google.maps.Marker({
-      position: { lat: 52.520008, lng: 13.404954 },
-      map: this.googleMap
+  createMarker = map => {
+    this.state.markerDataArray.map(marker => {
+      return new window.google.maps.Marker({
+        position: {
+          lat: marker.location_coordinates.lat,
+          lng: marker.location_coordinates.lng
+        },
+        map: map
+      });
     });
   };
 
@@ -62,10 +79,8 @@ class App extends Component {
     axios
       .get(`http://localhost:3001/autoComplete/${this.state.searchQuery}`)
       .then(response => {
-        this._addMarkerToMapData(
-          this.state.markerDataArray,
-          response.data.markerData
-        );
+        window.M.toast({ html: response.data.message });
+        this._getMarkers();
       })
       .catch(error => {
         console.log(error);
@@ -73,22 +88,28 @@ class App extends Component {
       .finally(() => {});
   };
 
-  _addMarkerToMapData = (array, markerData) => {
-    if (Object.keys(markerData).length) {
-      const index = array.findIndex(event => event.id === markerData.id);
-      if (index === -1) {
-        array.push(markerData);
-        window.M.toast({ html: "Location added" });
-      } else {
-        array[index] = markerData;
-        window.M.toast({ html: "Location exists !" });
-      }
+  _getMarkers = () => {
+    axios
+      .get(`http://localhost:3001/markers`)
+      .then(response => {
+        this._addMarkersToMapData(response.data.markers);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .finally(() => {});
+  };
+
+  _addMarkersToMapData = markerData => {
+    if (markerData) {
       this.setState({
-        markerDataArray: array
+        markerDataArray: markerData
       });
-    } else {
-      window.M.toast({ html: "Location not found !" });
     }
+  };
+
+  _deleteMarker = id => {
+    console.log(id);
   };
 
   render() {
@@ -167,12 +188,27 @@ class App extends Component {
                         <i className="material-icons left">room</i>
                         {marker.formatted_address}
                       </span>
-                      <div className="chip">Lattitude: {marker.location_coordinates.lat}</div>
-                      <div className="chip">Longitude: {marker.location_coordinates.lng}</div>
+                      <div className="chip">
+                        Lattitude: {marker.location_coordinates.lat}
+                      </div>
+                      <div className="chip">
+                        Longitude: {marker.location_coordinates.lng}
+                      </div>
                     </div>
                     <div className="card-action">
-                    <a className="waves-effect btn-flat grey-text">Edit</a>
-                    <a className="waves-effect btn-flat grey-text">Delete</a>
+                      <a href="!#" className="waves-effect btn-flat grey-text">
+                        Edit
+                      </a>
+                      <a
+                        href="!#"
+                        className="waves-effect btn-flat grey-text"
+                        onClick={e => {
+                          e.preventDefault();
+                          this._deleteMarker(marker.id);
+                        }}
+                      >
+                        Delete
+                      </a>
                     </div>
                   </div>
                 </div>
