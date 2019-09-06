@@ -7,24 +7,28 @@ class App extends Component {
     super(props);
     this.state = {
       searchButtonDisabled: true,
+      editButtonDisabled: true,
+      editFormVisible: false,
       searchQuery: "",
       markerDataArray: []
     };
+
     this.googleMap = "";
     this.marker = "";
+    this.markerArray = [];
     this.googleMapRef = React.createRef();
+    this.inputRef = React.createRef();
+    this.editMarkerRef = React.createRef();
     this.googleMapScript = document.createElement("script");
   }
 
   componentDidMount() {
     this.googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAyphEg6Ezze8PuQwfcVAn9e8S56BlEQM8&libraries=places`;
     window.document.body.appendChild(this.googleMapScript);
-
     this.googleMapScript.addEventListener("load", () => {
       this.googleMap = this.createGoogleMap();
       this.marker = this.createMarker(this.googleMap);
     });
-
     this._getMarkers();
   }
 
@@ -49,14 +53,24 @@ class App extends Component {
 
   createMarker = map => {
     this.state.markerDataArray.map(marker => {
-      return new window.google.maps.Marker({
+      let mark = new window.google.maps.Marker({
         position: {
           lat: marker.location_coordinates.lat,
           lng: marker.location_coordinates.lng
         },
+        title: marker.formatted_address,
         map: map
       });
+      this.markerArray.push(mark);
+      return mark;
     });
+  };
+
+  removeMarker = () => {
+    for (let i = 0; i < this.markerArray.length; i++) {
+      this.markerArray[i].setMap(null);
+    }
+    this._getMarkers();
   };
 
   _getSearchQuery = query => {
@@ -93,6 +107,7 @@ class App extends Component {
       .get(`http://localhost:3001/markers`)
       .then(response => {
         this._addMarkersToMapData(response.data.markers);
+        this.inputRef.current.value = "";
       })
       .catch(error => {
         console.log(error);
@@ -109,7 +124,57 @@ class App extends Component {
   };
 
   _deleteMarker = id => {
-    console.log(id);
+    if (id) {
+      axios
+        .delete(`http://localhost:3001/markers/${id}`)
+        .then(response => {
+          window.M.toast({ html: "Marker deleted" });
+          this.removeMarker();
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => {});
+    }
+  };
+
+  _editMarker = query => {
+    this.setState({
+      searchQuery: query
+    });
+    if (query && query.length > 1) {
+      this.setState({
+        editButtonDisabled: false
+      });
+    } else {
+      this.setState({
+        editButtonDisabled: true
+      });
+    }
+  };
+
+  _enableEditMode = () => {
+    this.setState({
+      editFormVisible: !this.state.editFormVisible
+    });
+  };
+
+  _editLocationMarker = markerId => {
+    if (markerId) {
+      axios
+        .put(`http://localhost:3001/markers/${markerId}`, {
+          payload: this.state.searchQuery
+        })
+        .then(response => {
+          window.M.toast({ html: "Marker updated" });
+          this.editMarkerRef.current.value = "";
+          this.removeMarker();
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => {});
+    }
   };
 
   render() {
@@ -154,6 +219,7 @@ class App extends Component {
                   <div className="row">
                     <div className="input-field col s10">
                       <input
+                        ref={this.inputRef}
                         id="location"
                         type="text"
                         className="validate"
@@ -188,27 +254,59 @@ class App extends Component {
                         <i className="material-icons left">room</i>
                         {marker.formatted_address}
                       </span>
-                      <div className="chip">
+                      <div className="chip blue lighten-2">
                         Lattitude: {marker.location_coordinates.lat}
                       </div>
-                      <div className="chip">
+                      <div className="chip blue lighten-3">
                         Longitude: {marker.location_coordinates.lng}
                       </div>
                     </div>
+                    <div
+                      className={`card-content grey-text ${
+                        this.state.editFormVisible ? "" : "hide"
+                      }`}
+                    >
+                      <div className="row">
+                        <div className="input-field col s10">
+                          <input
+                            ref={this.editMarkerRef}
+                            id="location_to_edit"
+                            type="text"
+                            className="validate"
+                            onChange={e =>
+                              this._editMarker(e.currentTarget.value)
+                            }
+                          />
+                        </div>
+                        <div className="col s2">
+                          <button
+                            className={`waves-effect waves-light blue btn ${
+                              this.state.editButtonDisabled ? "disabled" : ""
+                            }`}
+                            onClick={e => this._editLocationMarker(marker.id)}
+                          >
+                            <i className="material-icons">edit</i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="card-action">
-                      <a href="!#" className="waves-effect btn-flat grey-text">
+                      <button
+                        className="waves-effect btn-flat blue-text"
+                        onClick={this._enableEditMode}
+                      >
                         Edit
-                      </a>
-                      <a
-                        href="!#"
-                        className="waves-effect btn-flat grey-text"
+                      </button>
+                      <button
+                        className="waves-effect btn-flat red-text"
                         onClick={e => {
                           e.preventDefault();
                           this._deleteMarker(marker.id);
                         }}
                       >
                         Delete
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </div>
