@@ -91,7 +91,7 @@ class App extends Component {
   _searchLocation = event => {
     event.preventDefault();
     axios
-      .get(`http://localhost:3001/autoComplete/${this.state.searchQuery}`)
+      .get(`http://localhost:3001/search/${this.state.searchQuery}`)
       .then(response => {
         window.M.toast({ html: response.data.message });
         this._getMarkers();
