@@ -54,6 +54,10 @@ class App extends Component {
     }
   }
 
+  /**
+   * @function _initMaps
+   * A helper function to initialize the Maps service
+   */
   _initMaps = () => {
     this.googleMapScript.src = googleMapConfig.url
       .replace(/:key/, googleMapConfig.api_key)
@@ -65,6 +69,12 @@ class App extends Component {
     });
   };
 
+  /**
+   * @function createGoogleMap
+   * A helper function to create a google map using the initialized service
+   * and DOM object accessed using the react ref
+   * @returns {Object} - google maps object
+   */
   createGoogleMap = () => {
     return new window.google.maps.Map(this.googleMapRef.current, {
       zoom: googleMapConfig.map.defaultZoomLevel,
@@ -76,6 +86,12 @@ class App extends Component {
     });
   };
 
+  /**
+   * @function createMarker
+   * A helper function create a marker on a google map
+   * This function creates markers on map using data from state
+   * @param {Object} map - The created map object returned from createGoogleMap() function
+   */
   createMarker = map => {
     this.state.markerDataArray.map(marker => {
       let mark = new window.google.maps.Marker({
@@ -87,10 +103,12 @@ class App extends Component {
         map: map
       });
       this.markerArray.push(mark);
-      return mark;
     });
   };
 
+  /**
+   *
+   */
   removeMarker = () => {
     for (let i = 0; i < this.markerArray.length; i++) {
       this.markerArray[i].setMap(null);
