@@ -42,14 +42,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.googleMapScript.src = googleMapConfig.url
-      .replace(/:key/, googleMapConfig.api_key)
-      .replace(/:libraries/, googleMapConfig.libraries);
-    window.document.body.appendChild(this.googleMapScript);
-    this.googleMapScript.addEventListener("load", () => {
-      this.googleMap = this.createGoogleMap();
-      this.marker = this.createMarker(this.googleMap);
-    });
+    this._initMaps();
     this._getMarkers();
   }
 
@@ -60,6 +53,17 @@ class App extends Component {
       }
     }
   }
+
+  _initMaps = () => {
+    this.googleMapScript.src = googleMapConfig.url
+      .replace(/:key/, googleMapConfig.api_key)
+      .replace(/:libraries/, googleMapConfig.libraries);
+    window.document.body.appendChild(this.googleMapScript);
+    this.googleMapScript.addEventListener("load", () => {
+      this.googleMap = this.createGoogleMap();
+      this.marker = this.createMarker(this.googleMap);
+    });
+  };
 
   createGoogleMap = () => {
     return new window.google.maps.Map(this.googleMapRef.current, {
