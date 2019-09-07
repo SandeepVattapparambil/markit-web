@@ -46,7 +46,7 @@ class MarkerCard extends Component {
 
   render() {
     return (
-      <div className="col s12 m6">
+      <div className="col s12">
         <div className="card">
           <div className="card-content grey-text">
             <span className="card-title blue-text">

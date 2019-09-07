@@ -202,21 +202,23 @@ class App extends Component {
                 className="card-panel white map-holder"
               ></div>
             </div>
-            <AddMarker
-              triggerSearch={this._searchLocation}
-              passSearchQuery={this._getSearchQuery}
-            />
-            {this.state.markerDataArray.map((marker, key) => {
-              return (
-                <MarkerCard
-                  key={key}
-                  markerData={marker}
-                  passMarkerId={this._deleteMarker}
-                  passSearchQuery={this._editMarker}
-                  passLocationMarkerIdToEdit={this._editLocationMarker}
-                />
-              );
-            })}
+            <div className="col s12 m6">
+              <AddMarker
+                triggerSearch={this._searchLocation}
+                passSearchQuery={this._getSearchQuery}
+              />
+              {this.state.markerDataArray.map((marker, key) => {
+                return (
+                  <MarkerCard
+                    key={key}
+                    markerData={marker}
+                    passMarkerId={this._deleteMarker}
+                    passSearchQuery={this._editMarker}
+                    passLocationMarkerIdToEdit={this._editLocationMarker}
+                  />
+                );
+              })}
+            </div>
           </Row>
         </Container>
       </>
