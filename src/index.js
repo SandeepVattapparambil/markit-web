@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+/**
+ * Load main App component
+ */
 import App from "./components/App/App";
 
 import * as serviceWorker from "./serviceWorker";
