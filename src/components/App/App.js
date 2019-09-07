@@ -1,6 +1,27 @@
+/**
+ * Import React
+ */
 import React, { Component } from "react";
-import axios from "axios";
+
+/**
+ * Import services and configurations
+ */
+import Ajax from "../../services/ajax";
+import * as URL_SCHEMA from "../../config/urlSchema.json";
+import * as googleMapConfig from "../../config/googleMapsConfig.json";
+
+/**
+ * Impot stylesheets
+ */
 import "./App.css";
+
+/**
+ * Import sub components
+ */
+import Navbar from "../common/Navbar/Navbar";
+import Container from "../common/Container/Container";
+import Row from "../common/Row/Row";
+import MessageCard from "../common/MessageCard/MessageCard";
 
 class App extends Component {
   constructor(props) {
@@ -12,7 +33,6 @@ class App extends Component {
       searchQuery: "",
       markerDataArray: []
     };
-
     this.googleMap = "";
     this.marker = "";
     this.markerArray = [];
@@ -20,10 +40,13 @@ class App extends Component {
     this.inputRef = React.createRef();
     this.editMarkerRef = React.createRef();
     this.googleMapScript = document.createElement("script");
+    this.ajax = new Ajax();
   }
 
   componentDidMount() {
-    this.googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAyphEg6Ezze8PuQwfcVAn9e8S56BlEQM8&libraries=places`;
+    this.googleMapScript.src = googleMapConfig.url
+      .replace(/:key/, googleMapConfig.api_key)
+      .replace(/:libraries/, googleMapConfig.libraries);
     window.document.body.appendChild(this.googleMapScript);
     this.googleMapScript.addEventListener("load", () => {
       this.googleMap = this.createGoogleMap();
@@ -90,27 +113,33 @@ class App extends Component {
 
   _searchLocation = event => {
     event.preventDefault();
-    axios
-      .get(`http://localhost:3001/search/${this.state.searchQuery}`)
+    let url =
+      URL_SCHEMA.root_url.replace(/:port/, URL_SCHEMA.server_port) +
+      URL_SCHEMA.markitUrl.search.replace(/:id/, this.state.searchQuery);
+    this.ajax
+      .fetchUrl(url, "GET")
       .then(response => {
-        window.M.toast({ html: response.data.message });
+        window.M.toast({ html: response.message });
         this._getMarkers();
       })
       .catch(error => {
-        console.log(error);
+        window.M.toast({ html: 'Search failed, try again' });
       })
       .finally(() => {});
   };
 
   _getMarkers = () => {
-    axios
-      .get(`http://localhost:3001/markers`)
+    let url =
+      URL_SCHEMA.root_url.replace(/:port/, URL_SCHEMA.server_port) +
+      URL_SCHEMA.markitUrl.markers;
+    this.ajax
+      .fetchUrl(url, "GET")
       .then(response => {
-        this._addMarkersToMapData(response.data.markers);
+        this._addMarkersToMapData(response.markers);
         this.inputRef.current.value = "";
       })
       .catch(error => {
-        console.log(error);
+        window.M.toast({ html: 'Failed to load markers' });
       })
       .finally(() => {});
   };
@@ -125,14 +154,18 @@ class App extends Component {
 
   _deleteMarker = id => {
     if (id) {
-      axios
-        .delete(`http://localhost:3001/markers/${id}`)
+      let url =
+        URL_SCHEMA.root_url.replace(/:port/, URL_SCHEMA.server_port) +
+        URL_SCHEMA.markitUrl.markers +
+        id;
+      this.ajax
+        .fetchUrl(url, "DELETE")
         .then(response => {
           window.M.toast({ html: "Marker deleted" });
           this.removeMarker();
         })
         .catch(error => {
-          console.log(error);
+          window.M.toast({ html: 'Failed to delete marker' });
         })
         .finally(() => {});
     }
@@ -161,17 +194,19 @@ class App extends Component {
 
   _editLocationMarker = markerId => {
     if (markerId) {
-      axios
-        .put(`http://localhost:3001/markers/${markerId}`, {
-          payload: this.state.searchQuery
-        })
+      let url =
+        URL_SCHEMA.root_url.replace(/:port/, URL_SCHEMA.server_port) +
+        URL_SCHEMA.markitUrl.markers +
+        markerId;
+      this.ajax
+        .fetchUrl(url, "PUT", {}, { payload: this.state.searchQuery })
         .then(response => {
           window.M.toast({ html: "Marker updated" });
           this.editMarkerRef.current.value = "";
           this.removeMarker();
         })
         .catch(error => {
-          console.log(error);
+          window.M.toast({ html: 'Failed to edit marker' });
         })
         .finally(() => {});
     }
@@ -180,27 +215,10 @@ class App extends Component {
   render() {
     return (
       <>
-        <div className="navbar-fixed">
-          <nav>
-            <div className="nav-wrapper white">
-              <a href="#!" className="brand-logo grey-text">
-                &nbsp; MarkIt
-              </a>
-            </div>
-          </nav>
-        </div>
-        <div className="container">
-          <div className="row">
-            <div className="col s12 m12">
-              <div className="card-panel blue">
-                <span className="white-text">
-                  <strong>Hello..</strong>, welcome to MarkIt, this is a simple
-                  app which demonstrates the integration of google maps static
-                  api and geocoding api. You can add markers on the below map
-                  using this app.
-                </span>
-              </div>
-            </div>
+        <Navbar />
+        <Container>
+          <Row>
+            <MessageCard />
 
             <div className="col s12 m6">
               <div
@@ -216,7 +234,7 @@ class App extends Component {
                   <span className="card-title">
                     <i className="material-icons left">room</i>Add Marker
                   </span>
-                  <div className="row">
+                  <Row>
                     <div className="input-field col s10">
                       <input
                         ref={this.inputRef}
@@ -240,7 +258,7 @@ class App extends Component {
                         <i className="material-icons">search</i>
                       </a>
                     </div>
-                  </div>
+                  </Row>
                 </div>
               </div>
             </div>
@@ -266,7 +284,7 @@ class App extends Component {
                         this.state.editFormVisible ? "" : "hide"
                       }`}
                     >
-                      <div className="row">
+                      <Row>
                         <div className="input-field col s10">
                           <input
                             ref={this.editMarkerRef}
@@ -288,7 +306,7 @@ class App extends Component {
                             <i className="material-icons">edit</i>
                           </button>
                         </div>
-                      </div>
+                      </Row>
                     </div>
 
                     <div className="card-action">
@@ -312,8 +330,8 @@ class App extends Component {
                 </div>
               );
             })}
-          </div>
-        </div>
+          </Row>
+        </Container>
       </>
     );
   }

@@ -1,0 +1,8 @@
+{
+    "server_port": "3001",
+    "root_url": "http://localhost::port/",
+    "markitUrl": {
+        "markers": "markers/",
+        "search": "search/:id"
+    }
+}

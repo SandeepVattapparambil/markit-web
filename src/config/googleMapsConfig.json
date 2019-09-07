@@ -1,0 +1,5 @@
+{
+    "api_key": "AIzaSyAyphEg6Ezze8PuQwfcVAn9e8S56BlEQM8",
+    "libraries": "places",
+    "url": "https://maps.googleapis.com/maps/api/js?key=:key&libraries=:libraries"
+}
