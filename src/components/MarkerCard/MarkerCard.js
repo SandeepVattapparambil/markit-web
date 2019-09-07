@@ -7,7 +7,8 @@ class MarkerCard extends Component {
     super(props);
     this.state = {
       editButtonDisabled: true,
-      editFormVisible: false
+      editFormVisible: false,
+      markerLabel: this.props.markerData.formatted_address
     };
     this.editMarkerRef = React.createRef();
   }
@@ -17,6 +18,9 @@ class MarkerCard extends Component {
   };
 
   _editMarker = query => {
+    this.setState({
+      markerLabel: query
+    });
     this.props.passSearchQuery(query);
     if (query && query.length > 1) {
       this.setState({
@@ -72,6 +76,7 @@ class MarkerCard extends Component {
                   id="location_to_edit"
                   type="text"
                   className="validate"
+                  value={this.state.markerLabel}
                   onChange={e => this._editMarker(e.currentTarget.value)}
                 />
               </div>
