@@ -119,7 +119,7 @@ class App extends Component {
         window.M.toast({ html: response.message });
         this._getMarkers();
       })
-      .catch(error => {
+      .catch(() => {
         window.M.toast({ html: "Search failed, try again" });
       });
   };
@@ -133,7 +133,7 @@ class App extends Component {
       .then(response => {
         this._addMarkersToMapData(response.markers);
       })
-      .catch(error => {
+      .catch(() => {
         window.M.toast({ html: "Failed to load markers" });
       });
   };
@@ -158,7 +158,7 @@ class App extends Component {
           window.M.toast({ html: "Marker deleted" });
           this.removeMarker();
         })
-        .catch(error => {
+        .catch(() => {
           window.M.toast({ html: "Failed to delete marker" });
         });
     }
@@ -178,11 +178,11 @@ class App extends Component {
         markerId;
       this.ajax
         .fetchUrl(url, "PUT", {}, { payload: this.state.searchQuery })
-        .then(response => {
+        .then(() => {
           window.M.toast({ html: "Marker updated" });
           this.removeMarker();
         })
-        .catch(error => {
+        .catch(() => {
           window.M.toast({ html: "Failed to edit marker" });
         });
     }
