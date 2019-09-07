@@ -154,7 +154,7 @@ class App extends Component {
         id;
       this.ajax
         .fetchUrl(url, "DELETE")
-        .then(response => {
+        .then(() => {
           window.M.toast({ html: "Marker deleted" });
           this.removeMarker();
         })
