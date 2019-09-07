@@ -107,7 +107,8 @@ class App extends Component {
   };
 
   /**
-   *
+   * @function removeMarker
+   * A helper function to reset a map and then set the map back again
    */
   removeMarker = () => {
     for (let i = 0; i < this.markerArray.length; i++) {
@@ -116,6 +117,11 @@ class App extends Component {
     this._getMarkers();
   };
 
+  /**
+   * @function _getSearchQuery
+   * A helper function to get the search query from AddMarker component
+   * @param {String} query - The search query (address)
+   */
   _getSearchQuery = query => {
     this.setState({
       searchQuery: query
@@ -131,6 +137,10 @@ class App extends Component {
     }
   };
 
+  /**
+   * @function _searchLocation
+   * A helper function to search for a given address using the search api
+   */
   _searchLocation = () => {
     let url =
       URL_SCHEMA.root_url.replace(/:port/, URL_SCHEMA.server_port) +
@@ -146,6 +156,10 @@ class App extends Component {
       });
   };
 
+  /**
+   * @function _getMarkers
+   * A helper function to get a list of markers from api
+   */
   _getMarkers = () => {
     let url =
       URL_SCHEMA.root_url.replace(/:port/, URL_SCHEMA.server_port) +
@@ -160,6 +174,11 @@ class App extends Component {
       });
   };
 
+  /**
+   * @function _addMarkersToMapData
+   * A helper to add a marker to map data set
+   * @param {Object} markerData  -The marker data obtained from api
+   */
   _addMarkersToMapData = markerData => {
     if (markerData) {
       this.setState({
@@ -168,6 +187,11 @@ class App extends Component {
     }
   };
 
+  /**
+   * @function _deleteMarker
+   * A helper to delete a marker from marker data set
+   * @param {Number} id - The id of the marker
+   */
   _deleteMarker = id => {
     if (id) {
       let url =
@@ -186,12 +210,23 @@ class App extends Component {
     }
   };
 
+  /**
+   * @function _editMarker
+   * A helper function to store search query on to the state
+   * @param {String} query - The search query string
+   */
   _editMarker = query => {
     this.setState({
       searchQuery: query
     });
   };
 
+  /**
+   * @function _editLocationMarker
+   * A helper function edit a specific marker by sending the new address
+   * to the api with the id of the marker
+   * @param {Number} markerId - The id of the marker to be edited
+   */
   _editLocationMarker = markerId => {
     if (markerId) {
       let url =
