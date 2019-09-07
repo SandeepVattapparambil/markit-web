@@ -22,14 +22,13 @@ import Navbar from "../common/Navbar/Navbar";
 import Container from "../common/Container/Container";
 import Row from "../common/Row/Row";
 import MessageCard from "../common/MessageCard/MessageCard";
+import MarkerCard from "../MarkerCard/MarkerCard";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       searchButtonDisabled: true,
-      editButtonDisabled: true,
-      editFormVisible: false,
       searchQuery: "",
       markerDataArray: []
     };
@@ -38,7 +37,6 @@ class App extends Component {
     this.markerArray = [];
     this.googleMapRef = React.createRef();
     this.inputRef = React.createRef();
-    this.editMarkerRef = React.createRef();
     this.googleMapScript = document.createElement("script");
     this.ajax = new Ajax();
   }
@@ -123,9 +121,8 @@ class App extends Component {
         this._getMarkers();
       })
       .catch(error => {
-        window.M.toast({ html: 'Search failed, try again' });
-      })
-      .finally(() => {});
+        window.M.toast({ html: "Search failed, try again" });
+      });
   };
 
   _getMarkers = () => {
@@ -139,9 +136,8 @@ class App extends Component {
         this.inputRef.current.value = "";
       })
       .catch(error => {
-        window.M.toast({ html: 'Failed to load markers' });
-      })
-      .finally(() => {});
+        window.M.toast({ html: "Failed to load markers" });
+      });
   };
 
   _addMarkersToMapData = markerData => {
@@ -165,30 +161,14 @@ class App extends Component {
           this.removeMarker();
         })
         .catch(error => {
-          window.M.toast({ html: 'Failed to delete marker' });
-        })
-        .finally(() => {});
+          window.M.toast({ html: "Failed to delete marker" });
+        });
     }
   };
 
   _editMarker = query => {
     this.setState({
       searchQuery: query
-    });
-    if (query && query.length > 1) {
-      this.setState({
-        editButtonDisabled: false
-      });
-    } else {
-      this.setState({
-        editButtonDisabled: true
-      });
-    }
-  };
-
-  _enableEditMode = () => {
-    this.setState({
-      editFormVisible: !this.state.editFormVisible
     });
   };
 
@@ -202,13 +182,11 @@ class App extends Component {
         .fetchUrl(url, "PUT", {}, { payload: this.state.searchQuery })
         .then(response => {
           window.M.toast({ html: "Marker updated" });
-          this.editMarkerRef.current.value = "";
           this.removeMarker();
         })
         .catch(error => {
-          window.M.toast({ html: 'Failed to edit marker' });
-        })
-        .finally(() => {});
+          window.M.toast({ html: "Failed to edit marker" });
+        });
     }
   };
 
@@ -219,7 +197,6 @@ class App extends Component {
         <Container>
           <Row>
             <MessageCard />
-
             <div className="col s12 m6">
               <div
                 ref={this.googleMapRef}
@@ -227,7 +204,6 @@ class App extends Component {
                 className="card-panel white map-holder"
               ></div>
             </div>
-
             <div className="col s12 m6">
               <div className="card">
                 <div className="card-content grey-text">
@@ -262,72 +238,15 @@ class App extends Component {
                 </div>
               </div>
             </div>
-
             {this.state.markerDataArray.map((marker, key) => {
               return (
-                <div key={key} className="col s12 m6">
-                  <div className="card">
-                    <div className="card-content grey-text">
-                      <span className="card-title blue-text">
-                        <i className="material-icons left">room</i>
-                        {marker.formatted_address}
-                      </span>
-                      <div className="chip blue lighten-2">
-                        Lattitude: {marker.location_coordinates.lat}
-                      </div>
-                      <div className="chip blue lighten-3">
-                        Longitude: {marker.location_coordinates.lng}
-                      </div>
-                    </div>
-                    <div
-                      className={`card-content grey-text ${
-                        this.state.editFormVisible ? "" : "hide"
-                      }`}
-                    >
-                      <Row>
-                        <div className="input-field col s10">
-                          <input
-                            ref={this.editMarkerRef}
-                            id="location_to_edit"
-                            type="text"
-                            className="validate"
-                            onChange={e =>
-                              this._editMarker(e.currentTarget.value)
-                            }
-                          />
-                        </div>
-                        <div className="col s2">
-                          <button
-                            className={`waves-effect waves-light blue btn ${
-                              this.state.editButtonDisabled ? "disabled" : ""
-                            }`}
-                            onClick={e => this._editLocationMarker(marker.id)}
-                          >
-                            <i className="material-icons">edit</i>
-                          </button>
-                        </div>
-                      </Row>
-                    </div>
-
-                    <div className="card-action">
-                      <button
-                        className="waves-effect btn-flat blue-text"
-                        onClick={this._enableEditMode}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="waves-effect btn-flat red-text"
-                        onClick={e => {
-                          e.preventDefault();
-                          this._deleteMarker(marker.id);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <MarkerCard
+                  key={key}
+                  markerData={marker}
+                  passMarkerId={this._deleteMarker}
+                  passSearchQuery={this._editMarker}
+                  passLocationMarkerIdToEdit={this._editLocationMarker}
+                />
               );
             })}
           </Row>
