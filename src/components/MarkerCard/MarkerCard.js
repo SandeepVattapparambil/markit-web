@@ -38,6 +38,10 @@ class MarkerCard extends Component {
   _editLocationMarker = markerId => {
     this.props.passLocationMarkerIdToEdit(markerId);
     this.editMarkerRef.current.value = "";
+    this.setState({
+      editButtonDisabled: true,
+      editFormVisible: !this.state.editFormVisible
+    });
   };
 
   render() {

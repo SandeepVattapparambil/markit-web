@@ -1,5 +1,13 @@
 {
+    "url": "https://maps.googleapis.com/maps/api/js?key=:key&libraries=:libraries",
     "api_key": "AIzaSyAyphEg6Ezze8PuQwfcVAn9e8S56BlEQM8",
     "libraries": "places",
-    "url": "https://maps.googleapis.com/maps/api/js?key=:key&libraries=:libraries"
+    "map": {
+        "defaultZoomLevel": 11,
+        "defaultLocation": {
+            "lat": 52.520008,
+            "lng": 13.404954
+        },
+        "disableDefaultUI": true
+    }
 }
