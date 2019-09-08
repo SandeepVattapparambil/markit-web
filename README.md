@@ -20,6 +20,8 @@ app can be accessed from the url:
 
 `http://localhost:3000`
 
+> **Note:** Please make sure the markit-server is running 
+
 #### Tests
 
 You can run the unit tests from terminal by:
@@ -39,6 +41,7 @@ npm run build
 ```
 
 ### UI Design
+
 The UI for the app is built using [materialize-css](https://materializecss.com/) ui framework. This library can be implemented with jQuery as well as with vanila Javascript. In this app only vanilla implementation is used.
 
 ### Design Decisions and Guidelines
@@ -58,3 +61,4 @@ The `service` folder in the root of `src` folder keeps various service modules u
 1. `ajax.js` contains the `Ajax` class used in the app. This module exposes various ajax methods like `get`, `post`, `put`, `patch`, `delete` etc. This class implements the popular [axios](https://github.com/axios/axios) ajax library to expose `A+` promise based ajax methods. This class ensures that the app is independent of the ajax library used in the app and any changes made in the ajax implementation will not affect the app and the migration will be seamless.
 
 Api interactions with server are handled through promises and failures and rejections are gracefully handled.
+Configuration values are saved in js/json files and no values are hardcoded.
