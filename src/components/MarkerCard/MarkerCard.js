@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import "./style.css";
+
 import Row from "../common/Row/Row";
 
 class MarkerCard extends Component {
@@ -82,7 +84,7 @@ class MarkerCard extends Component {
               </div>
               <div className="col s2">
                 <button
-                  className={`waves-effect waves-light blue btn ${
+                  className={`waves-effect waves-light blue btn edit-btn ${
                     this.state.editButtonDisabled ? "disabled" : ""
                   }`}
                   onClick={e =>
@@ -97,6 +99,7 @@ class MarkerCard extends Component {
           <div className="card-action">
             <button
               className="waves-effect btn-flat blue-text"
+              title="toggle edit mode"
               onClick={this._enableEditMode}
             >
               Edit

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import './style.css';
+
 import Row from "../common/Row/Row";
 
 class AddMarker extends Component {
@@ -55,7 +57,7 @@ class AddMarker extends Component {
               <div className="col s2">
                 <button
                   href="!#"
-                  className={`waves-effect waves-light blue btn ${
+                  className={`waves-effect waves-light blue search-btn btn ${
                     this.state.searchButtonDisabled ? "disabled" : ""
                   }`}
                   onClick={e => this._searchLocation()}
