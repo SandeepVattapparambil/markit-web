@@ -102,7 +102,7 @@ class App extends Component {
         title: marker.formatted_address,
         map: map
       });
-      this.markerArray.push(mark);
+      return this.markerArray.push(mark);
     });
   };
 
