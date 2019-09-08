@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import App from "./App";
+import App from "./AddMarker";
 import M from "materialize-css";
 
 it("renders without crashing", () => {

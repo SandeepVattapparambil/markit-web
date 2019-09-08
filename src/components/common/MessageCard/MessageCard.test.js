@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import App from "./App";
+import App from "./MessageCard";
 import M from "materialize-css";
 
 it("renders without crashing", () => {
